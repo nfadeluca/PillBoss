@@ -11,9 +11,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { FiSearch } from "react-icons/fi"
 import { z } from "zod"
 
-import { ItemsService } from "@/client"
-import { ItemActionsMenu } from "@/components/Common/ItemActionsMenu"
-import AddItem from "@/components/Items/AddItem"
+import { PatientsService } from "@/client"
+import { PatientActionsMenu } from "@/components/Common/PatientActionsMenu"
+import AddPatient from "@/components/Patients/AddPatient"
 import PendingItems from "@/components/Pending/PendingItems"
 import {
   PaginationItems,
@@ -22,47 +22,45 @@ import {
   PaginationRoot,
 } from "@/components/ui/pagination.tsx"
 
-const itemsSearchSchema = z.object({
+const patientsSearchSchema = z.object({
   page: z.number().catch(1),
 })
 
 const PER_PAGE = 5
 
-function getItemsQueryOptions({ page }: { page: number }) {
+function getPatientsQueryOptions({ page }: { page: number }) {
   return {
     queryFn: () =>
-      ItemsService.readItems({ skip: (page - 1) * PER_PAGE, limit: PER_PAGE }),
-    queryKey: ["items", { page }],
+      PatientsService.readPatients({ skip: (page - 1) * PER_PAGE, limit: PER_PAGE }),
+    queryKey: ["patients", { page }],
   }
 }
 
 export const Route = createFileRoute("/_layout/patients")({
-  component: Items,
-  validateSearch: (search) => itemsSearchSchema.parse(search),
+  component: Patients,
+  validateSearch: (search) => patientsSearchSchema.parse(search),
 })
 
-function ItemsTable() {
+function PatientsTable() {
   const navigate = useNavigate({ from: Route.fullPath })
   const { page } = Route.useSearch()
 
   const { data, isLoading, isPlaceholderData } = useQuery({
-    ...getItemsQueryOptions({ page }),
+    ...getPatientsQueryOptions({ page }),
     placeholderData: (prevData) => prevData,
   })
 
   const setPage = (page: number) =>
-    navigate({
-      search: (prev: { [key: string]: string }) => ({ ...prev, page }),
-    })
+    navigate({ search: { page } })
 
-  const items = data?.data.slice(0, PER_PAGE) ?? []
+  const patients = data?.data.slice(0, PER_PAGE) ?? []
   const count = data?.count ?? 0
 
   if (isLoading) {
     return <PendingItems />
   }
 
-  if (items.length === 0) {
+  if (patients.length === 0) {
     return (
       <EmptyState.Root>
         <EmptyState.Content>
@@ -86,29 +84,21 @@ function ItemsTable() {
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader w="sm">ID</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Title</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Description</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">First Name</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Last Name</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Age</Table.ColumnHeader>
             <Table.ColumnHeader w="sm">Actions</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {items?.map((item) => (
-            <Table.Row key={item.id} opacity={isPlaceholderData ? 0.5 : 1}>
-              <Table.Cell truncate maxW="sm">
-                {item.id}
-              </Table.Cell>
-              <Table.Cell truncate maxW="sm">
-                {item.title}
-              </Table.Cell>
-              <Table.Cell
-                color={!item.description ? "gray" : "inherit"}
-                truncate
-                maxW="30%"
-              >
-                {item.description || "N/A"}
-              </Table.Cell>
+          {patients?.map((patient) => (
+            <Table.Row key={patient.id} opacity={isPlaceholderData ? 0.5 : 1}>
+              <Table.Cell truncate maxW="sm">{patient.id}</Table.Cell>
+              <Table.Cell truncate maxW="sm">{patient.first_name}</Table.Cell>
+              <Table.Cell truncate maxW="sm">{patient.last_name}</Table.Cell>
+              <Table.Cell truncate maxW="sm">{patient.age}</Table.Cell>
               <Table.Cell>
-                <ItemActionsMenu item={item} />
+                <PatientActionsMenu patient={patient} />
               </Table.Cell>
             </Table.Row>
           ))}
@@ -131,14 +121,14 @@ function ItemsTable() {
   )
 }
 
-function Items() {
+function Patients() {
   return (
     <Container maxW="full">
       <Heading size="lg" pt={12}>
         Patient Management
       </Heading>
-      <AddItem />
-      <ItemsTable />
+      <AddPatient />
+      <PatientsTable />
     </Container>
   )
 }

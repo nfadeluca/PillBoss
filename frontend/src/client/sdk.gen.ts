@@ -46,6 +46,16 @@ import type {
   UtilsTestEmailData,
   UtilsTestEmailResponse,
   UtilsHealthCheckResponse,
+  PatientsReadPatientsData,
+  PatientsReadPatientsResponse,
+  PatientsCreatePatientData,
+  PatientsCreatePatientResponse,
+  PatientsReadPatientData,
+  PatientsReadPatientResponse,
+  PatientsUpdatePatientData,
+  PatientsUpdatePatientResponse,
+  PatientsDeletePatientData,
+  PatientsDeletePatientResponse,
 } from "./types.gen"
 
 export class ItemsService {
@@ -544,6 +554,105 @@ export class UtilsService {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/utils/health-check/",
+    })
+  }
+}
+
+export class PatientsService {
+  /**
+   * Read Patients
+   * Retrieve patients.
+   */
+  public static readPatients(
+    data: PatientsReadPatientsData = {},
+  ): CancelablePromise<PatientsReadPatientsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/patients/",
+      query: {
+        skip: data.skip,
+        limit: data.limit,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Create Patient
+   * Create new patient.
+   */
+  public static createPatient(
+    data: PatientsCreatePatientData,
+  ): CancelablePromise<PatientsCreatePatientResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/patients/",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Read Patient
+   * Get patient by ID.
+   */
+  public static readPatient(
+    data: PatientsReadPatientData,
+  ): CancelablePromise<PatientsReadPatientResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/patients/{id}",
+      path: {
+        id: data.id,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Update Patient
+   * Update a patient.
+   */
+  public static updatePatient(
+    data: PatientsUpdatePatientData,
+  ): CancelablePromise<PatientsUpdatePatientResponse> {
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/patients/{id}",
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Delete Patient
+   * Delete a patient.
+   */
+  public static deletePatient(
+    data: PatientsDeletePatientData,
+  ): CancelablePromise<PatientsDeletePatientResponse> {
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/api/v1/patients/{id}",
+      path: {
+        id: data.id,
+      },
+      errors: {
+        422: "Validation Error",
+      },
     })
   }
 }

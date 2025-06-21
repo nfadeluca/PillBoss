@@ -232,3 +232,66 @@ export type UtilsTestEmailData = {
 export type UtilsTestEmailResponse = Message
 
 export type UtilsHealthCheckResponse = boolean
+
+export type PatientCreate = {
+  first_name: string
+  last_name: string
+  age: number
+  height_cm: number
+  weight_kg: number
+}
+
+export type PatientUpdate = {
+  first_name?: string | null
+  last_name?: string | null
+  age?: number | null
+  height_cm?: number | null
+  weight_kg?: number | null
+}
+
+export type PatientPublic = {
+  first_name: string
+  last_name: string
+  age: number
+  height_cm: number
+  weight_kg: number
+  id: string
+  owner_id: string
+}
+
+export type PatientsPublic = {
+  data: Array<PatientPublic>
+  count: number
+}
+
+export type PatientsReadPatientsData = {
+  limit?: number
+  skip?: number
+}
+
+export type PatientsReadPatientsResponse = PatientsPublic
+
+export type PatientsCreatePatientData = {
+  requestBody: PatientCreate
+}
+
+export type PatientsCreatePatientResponse = PatientPublic
+
+export type PatientsReadPatientData = {
+  id: string
+}
+
+export type PatientsReadPatientResponse = PatientPublic
+
+export type PatientsUpdatePatientData = {
+  id: string
+  requestBody: PatientUpdate
+}
+
+export type PatientsUpdatePatientResponse = PatientPublic
+
+export type PatientsDeletePatientData = {
+  id: string
+}
+
+export type PatientsDeletePatientResponse = Message
