@@ -22,10 +22,13 @@ dependencies = [
     "pydantic-settings<3.0.0,>=2.2.1",
     "sentry-sdk[fastapi]<2.0.0,>=1.40.6",
     "pyjwt<3.0.0,>=2.8.0",
+    "langchain==0.3.26",
+    "langchain-openai==0.3.24",
     "langgraph==0.4.8",
     "langsmith==0.4.1",
     "langchain-mcp-adapters==0.1.7",
     "mcp==1.9.4",
+    "python-dotenv>=1.0.1",
 ]
 
 [tool.uv]
