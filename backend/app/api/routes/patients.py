@@ -12,6 +12,8 @@ from app.models import (
     PatientsPublic,
     PatientUpdate,
     Message,
+    Medication,
+    MedicationsPublic,
 )
 
 router = APIRouter(prefix="/patients", tags=["patients"])
@@ -104,3 +106,45 @@ def delete_patient(
     session.delete(patient)
     session.commit()
     return Message(message="Patient deleted successfully")
+
+
+@router.get("/{id}/medications", response_model=MedicationsPublic)
+def read_patient_medications(
+    session: SessionDep, current_user: CurrentUser, id: uuid.UUID, skip: int = 0, limit: int = 100
+) -> Any:
+    """Get all medications assigned to a patient."""
+    patient = session.get(Patient, id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    if not current_user.is_superuser and (patient.owner_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+
+    meds = patient.medications[skip : skip + limit]
+    return MedicationsPublic(data=meds, count=len(patient.medications))
+
+
+@router.post("/{id}/medications/{medication_id}", response_model=PatientPublic)
+def assign_medication_to_patient(
+    session: SessionDep,
+    current_user: CurrentUser,
+    id: uuid.UUID,
+    medication_id: uuid.UUID,
+) -> Any:
+    """Assign an existing medication to a patient."""
+    patient = session.get(Patient, id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    if not current_user.is_superuser and (patient.owner_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+
+    medication = session.get(Medication, medication_id)
+    if not medication:
+        raise HTTPException(status_code=404, detail="Medication not found")
+
+    if medication not in patient.medications:
+        patient.medications.append(medication)
+        session.add(patient)
+        session.commit()
+        session.refresh(patient)
+
+    return patient

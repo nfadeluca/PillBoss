@@ -83,12 +83,26 @@ class PatientUpdate(PatientBase):
 
 
 # Database model, database table inferred from class name
+class PatientMedicationLink(SQLModel, table=True):
+    """Link table to associate patients with medications (many-to-many)."""
+    patient_id: uuid.UUID | None = Field(
+        default=None, foreign_key="patient.id", primary_key=True
+    )
+    medication_id: uuid.UUID | None = Field(
+        default=None, foreign_key="medication.id", primary_key=True
+    )
+
+
 class Patient(PatientBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     owner_id: uuid.UUID = Field(
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )
     owner: User | None = Relationship(back_populates="patients")
+    # Many-to-many relationship with medications
+    medications: list["Medication"] = Relationship(
+        back_populates="patients", link_model=PatientMedicationLink
+    )
 
 
 # Properties to return via API, id is always required
@@ -145,6 +159,10 @@ class Medication(MedicationBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     owner_id: uuid.UUID | None = Field(foreign_key="user.id", default=None, nullable=True)
     owner: User | None = Relationship(back_populates="medications")
+    # Many-to-many relationship with patients
+    patients: list["Patient"] = Relationship(
+        back_populates="medications", link_model=PatientMedicationLink
+    )
 
 
 class MedicationPublic(MedicationBase):
