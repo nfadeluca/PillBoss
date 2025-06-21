@@ -32,7 +32,7 @@ async def chat_endpoint(request: Request):
         for char in full_text:
             chunk = {"type": "0", "value": char}
             yield (json.dumps(chunk) + "\n").encode()
-            await asyncio.sleep(0)  # yield control to event loop
+            await asyncio.sleep(0.01)  # 10 ms delay – tweak as desired
 
         finish_chunk = {
             "type": "d",
