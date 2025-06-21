@@ -11,6 +11,7 @@
     "generate-client": "openapi-ts"
   },
   "dependencies": {
+    "@assistant-ui/react": "^0.10.24",
     "@chakra-ui/react": "^3.8.0",
     "@emotion/react": "^11.14.0",
     "@tanstack/react-query": "^5.28.14",
@@ -23,7 +24,9 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^5.0.0",
     "react-hook-form": "7.49.3",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "assistant-stream": "^0.2.17",
+    "@assistant-ui/react-ai-sdk": "^0.10.14"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

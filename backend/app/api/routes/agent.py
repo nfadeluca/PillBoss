@@ -1,26 +1,49 @@
-from fastapi import APIRouter
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Request
+from fastapi.responses import StreamingResponse
+import json
+import asyncio
 
 from agents.graph import graph
 
-router = APIRouter(prefix="/agent", tags=["agent"])
+router = APIRouter(prefix="/chat", tags=["chat"])
 
 
-class ChatRequest(BaseModel):
-    message: str = Field(..., description="User's chat message")
+@router.post("/")
+async def chat_endpoint(request: Request):
+    """Stream the assistant reply in the DataStream format expected by assistant-ui."""
 
+    data = await request.json()
 
-class ChatResponse(BaseModel):
-    response: str = Field(..., description="Assistant's reply")
+    # Extract the newest user message from the array sent by assistant-ui
+    messages = data.get("messages", [])
+    user_message = next(
+        (m for m in reversed(messages) if m.get("role") == "user"),
+        {"content": ""},
+    )
 
-
-@router.post("/chat", response_model=ChatResponse)
-def chat_endpoint(payload: ChatRequest) -> ChatResponse:
-    """Send a single message to the LangGraph agent and return its reply."""
-
-    # Invoke the compiled graph synchronously with one-user message.
-    result = graph.invoke({"messages": [{"role": "user", "content": payload.message}]})
-
-    # The assistant's response is the last item in the messages list.
+    # 1. Run the LangGraph agent to get the final assistant message (blocking call)
+    result = graph.invoke({"messages": [{"role": "user", "content": user_message.get("content", "")}]})
     assistant_msg = result["messages"][-1]
-    return ChatResponse(response=getattr(assistant_msg, "content", str(assistant_msg)))
+    full_text = getattr(assistant_msg, "content", str(assistant_msg))
+
+    # 2. Generator that yields DataStream chunks (type "0" => TextDelta, type "d" => FinishMessage)
+    async def data_stream():
+        # Stream each character; change to words/tokens if desired
+        for char in full_text:
+            chunk = {"type": "0", "value": char}
+            yield (json.dumps(chunk) + "\n").encode()
+            await asyncio.sleep(0)  # yield control to event loop
+
+        finish_chunk = {
+            "type": "d",
+            "value": {
+                "finishReason": "stop",
+                "usage": {"promptTokens": 0, "completionTokens": 0},
+            },
+        }
+        yield (json.dumps(finish_chunk) + "\n").encode()
+
+    headers = {"x-vercel-ai-data-stream": "v1"}
+    return StreamingResponse(
+        data_stream(), media_type="text/plain; charset=utf-8", headers=headers
+    )
