@@ -19,6 +19,7 @@ import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutPatientsImport } from './routes/_layout/patients'
+import { Route as LayoutMedicationsImport } from './routes/_layout/medications'
 import { Route as LayoutChatImport } from './routes/_layout/chat'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
 
@@ -64,6 +65,11 @@ const LayoutPatientsRoute = LayoutPatientsImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutMedicationsRoute = LayoutMedicationsImport.update({
+  path: '/medications',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutChatRoute = LayoutChatImport.update({
   path: '/chat',
   getParentRoute: () => LayoutRoute,
@@ -106,6 +112,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutChatImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/medications': {
+      preLoaderRoute: typeof LayoutMedicationsImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/patients': {
       preLoaderRoute: typeof LayoutPatientsImport
       parentRoute: typeof LayoutImport
@@ -127,6 +137,7 @@ export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
     LayoutAdminRoute,
     LayoutChatRoute,
+    LayoutMedicationsRoute,
     LayoutPatientsRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,

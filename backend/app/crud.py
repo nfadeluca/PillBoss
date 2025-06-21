@@ -4,7 +4,15 @@ from typing import Any
 from sqlmodel import Session, select
 
 from app.core.security import get_password_hash, verify_password
-from app.models import Patient, PatientCreate, User, UserCreate, UserUpdate
+from app.models import (
+    Patient,
+    PatientCreate,
+    Medication,
+    MedicationCreate,
+    User,
+    UserCreate,
+    UserUpdate,
+)
 
 
 def create_user(*, session: Session, user_create: UserCreate) -> User:
@@ -54,3 +62,11 @@ def create_patient(
     session.commit()
     session.refresh(db_patient)
     return db_patient
+
+
+def create_medication(*, session: Session, medication_in: MedicationCreate) -> Medication:
+    db_med = Medication.model_validate(medication_in)
+    session.add(db_med)
+    session.commit()
+    session.refresh(db_med)
+    return db_med

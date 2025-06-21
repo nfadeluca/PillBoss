@@ -45,6 +45,8 @@ class User(UserBase, table=True):
     hashed_password: str
     # Relationship with patients created/owned by the user
     patients: list["Patient"] = Relationship(back_populates="owner", cascade_delete=True)
+    # Relationship with medications created/owned by the user
+    medications: list["Medication"] = Relationship(back_populates="owner", cascade_delete=True)
 
 
 # Properties to return via API, id is always required
@@ -119,3 +121,37 @@ class TokenPayload(SQLModel):
 class NewPassword(SQLModel):
     token: str
     new_password: str = Field(min_length=8, max_length=40)
+
+
+class MedicationBase(SQLModel):
+    brand_name: str = Field(min_length=1, max_length=255)
+    generic: str = Field(min_length=1, max_length=255)
+    dose_mg: int = Field(gt=0)
+    cost_usd: float = Field(gt=0)
+
+
+class MedicationCreate(MedicationBase):
+    pass
+
+
+class MedicationUpdate(MedicationBase):
+    brand_name: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore
+    generic: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore
+    dose_mg: int | None = Field(default=None, gt=0)  # type: ignore
+    cost_usd: float | None = Field(default=None, gt=0)  # type: ignore
+
+
+class Medication(MedicationBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    owner_id: uuid.UUID | None = Field(foreign_key="user.id", default=None, nullable=True)
+    owner: User | None = Relationship(back_populates="medications")
+
+
+class MedicationPublic(MedicationBase):
+    id: uuid.UUID
+    owner_id: uuid.UUID
+
+
+class MedicationsPublic(SQLModel):
+    data: list[MedicationPublic]
+    count: int

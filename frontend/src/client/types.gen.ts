@@ -295,3 +295,63 @@ export type PatientsDeletePatientData = {
 }
 
 export type PatientsDeletePatientResponse = Message
+
+export type MedicationCreate = {
+  brand_name: string
+  generic: string
+  dose_mg: number
+  cost_usd: number
+}
+
+export type MedicationUpdate = {
+  brand_name?: string | null
+  generic?: string | null
+  dose_mg?: number | null
+  cost_usd?: number | null
+}
+
+export type MedicationPublic = {
+  brand_name: string
+  generic: string
+  dose_mg: number
+  cost_usd: number
+  id: string
+  owner_id: string
+}
+
+export type MedicationsPublic = {
+  data: Array<MedicationPublic>
+  count: number
+}
+
+export type MedicationsReadMedicationsData = {
+  limit?: number
+  skip?: number
+}
+
+export type MedicationsReadMedicationsResponse = MedicationsPublic
+
+export type MedicationsCreateMedicationData = {
+  requestBody: MedicationCreate
+}
+
+export type MedicationsCreateMedicationResponse = MedicationPublic
+
+export type MedicationsReadMedicationData = {
+  id: string
+}
+
+export type MedicationsReadMedicationResponse = MedicationPublic
+
+export type MedicationsUpdateMedicationData = {
+  id: string
+  requestBody: MedicationUpdate
+}
+
+export type MedicationsUpdateMedicationResponse = MedicationPublic
+
+export type MedicationsDeleteMedicationData = {
+  id: string
+}
+
+export type MedicationsDeleteMedicationResponse = Message

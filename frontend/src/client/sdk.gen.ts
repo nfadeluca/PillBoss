@@ -56,6 +56,16 @@ import type {
   PatientsUpdatePatientResponse,
   PatientsDeletePatientData,
   PatientsDeletePatientResponse,
+  MedicationsReadMedicationsData,
+  MedicationsReadMedicationsResponse,
+  MedicationsCreateMedicationData,
+  MedicationsCreateMedicationResponse,
+  MedicationsReadMedicationData,
+  MedicationsReadMedicationResponse,
+  MedicationsUpdateMedicationData,
+  MedicationsUpdateMedicationResponse,
+  MedicationsDeleteMedicationData,
+  MedicationsDeleteMedicationResponse,
 } from "./types.gen"
 
 export class ItemsService {
@@ -653,6 +663,71 @@ export class PatientsService {
       errors: {
         422: "Validation Error",
       },
+    })
+  }
+}
+
+export class MedicationsService {
+  /** Retrieve medications. */
+  public static readMedications(
+    data: MedicationsReadMedicationsData = {},
+  ): CancelablePromise<MedicationsReadMedicationsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/medications/",
+      query: { skip: data.skip, limit: data.limit },
+      errors: { 422: "Validation Error" },
+    })
+  }
+
+  /** Create medication. */
+  public static createMedication(
+    data: MedicationsCreateMedicationData,
+  ): CancelablePromise<MedicationsCreateMedicationResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/medications/",
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: { 422: "Validation Error" },
+    })
+  }
+
+  /** Get medication. */
+  public static readMedication(
+    data: MedicationsReadMedicationData,
+  ): CancelablePromise<MedicationsReadMedicationResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/medications/{id}",
+      path: { id: data.id },
+      errors: { 422: "Validation Error" },
+    })
+  }
+
+  /** Update medication. */
+  public static updateMedication(
+    data: MedicationsUpdateMedicationData,
+  ): CancelablePromise<MedicationsUpdateMedicationResponse> {
+    return __request(OpenAPI, {
+      method: "PUT",
+      url: "/api/v1/medications/{id}",
+      path: { id: data.id },
+      body: data.requestBody,
+      mediaType: "application/json",
+      errors: { 422: "Validation Error" },
+    })
+  }
+
+  /** Delete medication. */
+  public static deleteMedication(
+    data: MedicationsDeleteMedicationData,
+  ): CancelablePromise<MedicationsDeleteMedicationResponse> {
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/api/v1/medications/{id}",
+      path: { id: data.id },
+      errors: { 422: "Validation Error" },
     })
   }
 }
