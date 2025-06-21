@@ -36,7 +36,7 @@ function getItemsQueryOptions({ page }: { page: number }) {
   }
 }
 
-export const Route = createFileRoute("/_layout/items")({
+export const Route = createFileRoute("/_layout/patients")({
   component: Items,
   validateSearch: (search) => itemsSearchSchema.parse(search),
 })
@@ -70,9 +70,9 @@ function ItemsTable() {
             <FiSearch />
           </EmptyState.Indicator>
           <VStack textAlign="center">
-            <EmptyState.Title>You don't have any items yet</EmptyState.Title>
+            <EmptyState.Title>You don't have any patients yet</EmptyState.Title>
             <EmptyState.Description>
-              Add a new item to get started
+              Add a new patient to get started
             </EmptyState.Description>
           </VStack>
         </EmptyState.Content>
@@ -135,7 +135,7 @@ function Items() {
   return (
     <Container maxW="full">
       <Heading size="lg" pt={12}>
-        Items Management
+        Patient Management
       </Heading>
       <AddItem />
       <ItemsTable />
