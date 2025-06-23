@@ -148,3 +148,30 @@ def assign_medication_to_patient(
         session.refresh(patient)
 
     return patient
+
+
+@router.delete("/{id}/medications/{medication_id}")
+def remove_medication_from_patient(
+    session: SessionDep,
+    current_user: CurrentUser,
+    id: uuid.UUID,
+    medication_id: uuid.UUID,
+) -> Message:
+    """Remove a medication from a patient."""
+    patient = session.get(Patient, id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    if not current_user.is_superuser and (patient.owner_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+
+    medication = session.get(Medication, medication_id)
+    if not medication:
+        raise HTTPException(status_code=404, detail="Medication not found")
+
+    if medication in patient.medications:
+        patient.medications.remove(medication)
+        session.add(patient)
+        session.commit()
+        session.refresh(patient)
+
+    return Message(message="Medication removed from patient successfully")

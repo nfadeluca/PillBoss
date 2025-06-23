@@ -12,6 +12,7 @@ from app.models import (
     MedicationsPublic,
     MedicationUpdate,
     Message,
+    PatientsPublic,
 )
 
 router = APIRouter(prefix="/medications", tags=["medications"])
@@ -84,4 +85,15 @@ def delete_medication(
         raise HTTPException(status_code=404, detail="Medication not found")
     session.delete(med)
     session.commit()
-    return Message(message="Medication deleted successfully") 
+    return Message(message="Medication deleted successfully")
+
+
+@router.get("/{id}/patients", response_model=PatientsPublic)
+def list_patients_for_medication(
+    session: SessionDep, current_user: CurrentUser, id: uuid.UUID
+) -> Any:
+    """List patients for a medication."""
+    med = session.get(Medication, id)
+    if not med:
+        raise HTTPException(status_code=404, detail="Medication not found")
+    return PatientsPublic(data=med.patients, count=len(med.patients)) 

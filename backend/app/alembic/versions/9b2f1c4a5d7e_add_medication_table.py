@@ -32,7 +32,7 @@ def upgrade():
     op.execute(
         """
         INSERT INTO medication (id, brand_name, generic, dose_mg, cost_usd, owner_id)
-        SELECT uuid_generate_v4(), data.brand, data.generic, data.dose, data.cost, u.id
+        SELECT uuid_generate_v4(), data.brand, data.generic, data.dose, data.cost, NULL
         FROM (
             VALUES
                 ('Tylenol', 'Acetaminophen', 500, 8.99),
@@ -40,8 +40,8 @@ def upgrade():
                 ('Lipitor', 'Atorvastatin', 40, 129.99),
                 ('Zoloft', 'Sertraline', 50, 24.99),
                 ('Glucophage', 'Metformin', 500, 12.5)
-        ) AS data(brand, generic, dose, cost),
-        (SELECT id FROM "user" LIMIT 1) AS u;
+        ) AS data(brand, generic, dose, cost)
+        WHERE NOT EXISTS (SELECT 1 FROM medication);
         """
     )
 

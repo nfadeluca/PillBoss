@@ -84,6 +84,7 @@ class PatientUpdate(PatientBase):
 
 # Database model, database table inferred from class name
 class PatientMedicationLink(SQLModel, table=True):
+    __tablename__ = "patient_medication_link"
     """Link table to associate patients with medications (many-to-many)."""
     patient_id: uuid.UUID | None = Field(
         default=None, foreign_key="patient.id", primary_key=True
@@ -167,7 +168,7 @@ class Medication(MedicationBase, table=True):
 
 class MedicationPublic(MedicationBase):
     id: uuid.UUID
-    owner_id: uuid.UUID
+    owner_id: uuid.UUID | None = None
 
 
 class MedicationsPublic(SQLModel):

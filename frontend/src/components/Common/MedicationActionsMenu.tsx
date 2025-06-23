@@ -5,6 +5,7 @@ import { MenuContent, MenuRoot, MenuTrigger } from "../ui/menu"
 import type { MedicationPublic } from "@/client"
 import EditMedication from "../Medications/EditMedication"
 import DeleteMedication from "../Medications/DeleteMedication"
+import ManageMedicationPatients from "../Medications/ManageMedicationPatients"
 
 interface MedicationActionsMenuProps {
   medication: MedicationPublic
@@ -19,6 +20,7 @@ export const MedicationActionsMenu = ({ medication }: MedicationActionsMenuProps
     </MenuTrigger>
     <MenuContent>
       <EditMedication medication={medication} />
+      <ManageMedicationPatients medication={medication} />
       <DeleteMedication id={medication.id} />
     </MenuContent>
   </MenuRoot>
