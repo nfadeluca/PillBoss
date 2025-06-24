@@ -10,31 +10,25 @@ FastMCP happens in `server.py`.
 from typing import Final
 
 
-def get_optimal_dose(medication: str) -> str:
-    """Return the recommended default dose for *medication*.
+PATIENTS: Final[list[dict[str, str]]] = [
+    {"id": "p1", "name": "Alice Smith"},
+    {"id": "p2", "name": "Bob Johnson"},
+    {"id": "p3", "name": "Carol Williams"},
+]
 
-    The implementation is intentionally minimal for demonstration purposes.  A
-    small lookup table is used for a few common medications; unknown inputs
-    fall back to a generic recommendation so the tool always returns a value.
 
-    Parameters
-    ----------
-    medication:
-        The name of the medication (case-insensitive).
+def list_patients() -> list[dict[str, str]]:
+    """Return a hard-coded list of the current patients.
+
+    In a real system this would query a database or service. For now we
+    simply return a static list so that the FastMCP demo has predictable
+    output.
 
     Returns
     -------
-    str
-        A human-readable default dose (e.g., "325 mg once daily").
+    list[dict[str, str]]
+        Each element contains an ``id`` and ``name`` key identifying a patient.
     """
 
-    MED_DEFAULTS: Final[dict[str, str]] = {
-        "aspirin": "325 mg once daily",
-        "ibuprofen": "400 mg every 6 hours as needed (maximum 2400 mg/day)",
-        "acetaminophen": "500 mg every 6 hours as needed (maximum 3000 mg/day)",
-    }
-
-    normalized = medication.lower().strip()
-
-    # Attempt lookup; use fallback if not present.
-    return MED_DEFAULTS.get(normalized, "1 tablet once daily (default demo value)")
+    # The slice copy guards against callers mutating our module-level constant.
+    return PATIENTS.copy()
