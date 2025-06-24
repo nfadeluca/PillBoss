@@ -15,4 +15,8 @@ class State(TypedDict):
     overwriting it - exactly as demonstrated in the LangGraph basic-chatbot tutorial.
     """
 
-    messages: Annotated[List, add_messages] 
+    messages: Annotated[List, add_messages]
+    # Optional field that stores retrieved context when the router directs
+    # the conversation through the RAG pipeline. Nodes that don't rely on
+    # retrieval simply ignore it.
+    context: str | None 

@@ -29,6 +29,8 @@ dependencies = [
     "langchain-mcp-adapters==0.1.7",
     "mcp==1.9.4",
     "python-dotenv>=1.0.1",
+    "fastmcp==2.8.1",
+    "langchain-mcp-adapters==0.1.7",
 ]
 
 [tool.uv]

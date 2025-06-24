@@ -1,0 +1,6 @@
+test rag retrieve:
+what color is ibuprofen
+
+test prompt template:
+what color isn't ibuprofen
+

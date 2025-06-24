@@ -10,7 +10,7 @@ const items = [
   { icon: FiHome, title: "Dashboard", path: "/" },
   { icon: FiBriefcase, title: "Patients", path: "/patients" },
   { icon: FiPackage, title: "Medications", path: "/medications" },
-  { icon: FiMessageCircle, title: "AI Chat", path: "/chat" },
+  { icon: FiMessageCircle, title: "Pill Bot", path: "/chat" },
   { icon: FiSettings, title: "User Settings", path: "/settings" },
 ]
 

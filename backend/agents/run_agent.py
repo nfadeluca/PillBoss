@@ -11,7 +11,6 @@ Environment variables:
 
 from __future__ import annotations
 
-import sys
 from contextlib import suppress
 
 from agents.graph import graph
